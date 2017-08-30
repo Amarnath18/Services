@@ -101,3 +101,81 @@
     
    
 }
+
+
+
+
+
+
+func createDatabase()->(){
+    var databasePath = NSString()
+    let filemgr = NSFileManager.defaultManager()
+    let dirPaths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory,
+                                            .UserDomainMask, true)
+    
+    let docsDir = dirPaths[0]
+    
+    databasePath = docsDir.stringByAppendingString("/file.sqlite")
+    print("Data base existed\(databasePath)")
+    let bundleDatabasePath = NSBundle.mainBundle().pathForResource("file", ofType: "sqlite")
+    do   {
+        try  filemgr.copyItemAtPath(bundleDatabasePath!, toPath: databasePath as String)
+    }catch _ {
+        
+    }
+    DataBasePathDir = databasePath as String
+    if filemgr.fileExistsAtPath(databasePath as String) {
+        
+        contactDB = FMDatabase(path: databasePath as String)
+        
+        if contactDB == nil {
+            print("Error: \(contactDB.lastErrorMessage())n Actually:- DB should not be nil")
+        }
+        
+        if contactDB.open() {
+            var sql_stmt = "create table if not exists alerts (ID integer primary key, SUBJECT text not null, CONTENT text not null, STATUS integer not null ,MODIFIED_ON text not null)"
+            if !contactDB.executeStatements(sql_stmt) {
+                print("Error: \(contactDB.lastErrorMessage())\n Actually:- APP_ALERTS table should be created")
+            }else{
+                print("APP_ALERTS table created succesfully")
+            }
+//            sql_stmt = "create table if not exists app_tips (ID integer primary key, `content`	text NOT NULL DEFAULT "string", STATUS integer not null ,MODIFIED_ON text not null)"
+//            if !contactDB.executeStatements(sql_stmt) {
+//                print("Error: \(contactDB.lastErrorMessage())\n Actually:- APP_TIPS table should be created")
+//            }else{
+//                print("APP_TIPS table created succesfully")
+//            }
+            sql_stmt = "create table if not exists banners (ID integer primary key, IMAGE text not null ,RSTATUS integer not null ,MODIFIED_ON text not null)"
+            if !contactDB.executeStatements(sql_stmt) {
+                
+                print("Error: \(contactDB.lastErrorMessage()) \n Actually:- APP_BANNERS table should be created")
+                
+            }else{
+                print("APP_BANNERS table created succesfully")
+            }
+            sql_stmt = "create table if not exists compare ( ID integer primary key, MODEL_ID integer not null ,VARIANT_ID integer not null, COMPARE_IMAGE text not null , STATUS integer not null, MODIFIED_ON text not null)"
+            
+            if !contactDB.executeStatements(sql_stmt) {
+                print("Error: \(contactDB.lastErrorMessage())\n Actually:- COMPARE table should be created")
+            }else{
+                print("APP_COMPARE table created succesfully")
+            }
+            
+            
+            if !contactDB.executeStatements(sql_stmt) {
+                print("Error: \(contactDB.lastErrorMessage()) \n Actually:- SERVICE table should be created")
+            }else{
+                print("APP_SERVICE table created succesfully")
+            }
+            
+            
+            insertData()
+            //contactDB.close()
+        } else {
+            print("Error: \(contactDB.lastErrorMessage())")
+        }
+    }else{
+        print("file already existed")
+    }
+    
+}
