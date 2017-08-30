@@ -1,0 +1,103 @@
+ func getData(_ appendString:String, completion: @escaping (_ result: NSDictionary) -> Void) { //completionHandler: ((NSDictionary!) -> Void)?) {
+        
+        let urlString = String(format: "https:://urlurl",appendString.replacingOccurrences(of: " ", with: ""))
+        
+        ////print(urlString)
+        
+        let url = URL(string: urlString)
+        
+        let request: NSMutableURLRequest = NSMutableURLRequest(url:url!)
+        request.httpMethod = "GET"
+        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+         let config = URLSessionConfiguration.default
+        _ = URLSession(configuration: config)
+       
+   let task = URLSession.shared.dataTask(with: request as URLRequest) {(data, response, error) in
+            // var error: AutoreleasingUnsafeMutablePointer<NSError?> = nil
+            
+            var jsonResult: NSDictionary! = [:]
+            do {
+                
+                if let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary {
+                    
+//                    ////print("The FiNAl Response is \(json)")
+                    jsonResult = json
+                    
+                } else {
+                    let jsonStr = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
+                    //print("Error could not parse JSON: \(jsonStr)")
+                }
+                
+            } catch let parseError {
+                //print(parseError)
+                let jsonStr = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
+                //print("Error could not parse JSON: '\(jsonStr)'")
+            }
+            
+            // then on complete I call the completionHandler...
+            //completionHandler?(jsonResult);
+            completion(jsonResult)
+        }
+        task.resume()
+    }
+    
+    func post_request(_ appendString:String,parameterStr:String, completion: @escaping (_ result: NSDictionary) -> Void) {//completionHandler: ((NSDictionary!) -> Void)?) {
+        var responseDict:NSDictionary = [:]
+        ////print("parameters are \(parameterStr)")
+        
+        let url:URL = URL(string: NSString(format: "https:://urlurl", appendString.replacingOccurrences(of: " ", with: "")) as String)!
+        _ = URLSession.shared
+        //print(session)
+        let request = NSMutableURLRequest(url: url)
+        request.httpMethod = "POST"
+        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringCacheData
+         let paramString = parameterStr
+        request.httpBody = paramString.data(using: String.Encoding.utf8)
+        
+        let task = URLSession.shared.dataTask(with: request as URLRequest) {
+            (
+            returnData, response, error) in
+            
+            guard let _:Data = returnData, let _:URLResponse = response  , error == nil else {
+                ////print("error")
+                return
+            }
+            
+            let dataString = NSString(data: returnData!, encoding: String.Encoding.utf8.rawValue)
+            //print(dataString!)
+            do {
+                
+                if let json = try JSONSerialization.jsonObject(with: returnData!, options: []) as? NSDictionary {
+                    
+                    
+                    responseDict = json
+                    
+//                    //print("The Requested API is \(responseDict)")
+                    
+                    
+                } else {
+                    let jsonStr = NSString(data: returnData!, encoding: String.Encoding.utf8.rawValue)
+                    //print("Error could not parse JSON: \(jsonStr)")
+                }
+                
+            } catch let parseError {
+                //print(parseError)
+                let jsonStr = NSString(data: returnData!, encoding: String.Encoding.utf8.rawValue)
+                //print("Error could not parse JSON: '\(jsonStr)'")
+            }
+            
+            //completionHandler!(responseDict)
+            completion(responseDict)
+        }
+        
+        task.resume()
+        
+    }
+    
+ post_request("masters", parameterStr: "date=\(date)", completion: { (JSON : NSDictionary) in
+      print(JSON)
+ })
+
+    
+   
+}
