@@ -179,3 +179,77 @@ func createDatabase()->(){
     }
     
 }
+
+
+
+
+
+
+
+func saveAlertsTable(id: String,subject:String,content : String,status: String,modified_on: String)->Bool {
+    if contactDB.open() {
+
+        let insertSQL = "INSERT OR REPLACE INTO App_Alerts (id,subject,content,status,modified_on) values ('\(id)', '\(subject)','\(content)','\(status)','\(modified_on)')"
+    print("insert alerts sql****\(insertSQL)")
+        let result = contactDB.executeUpdate(insertSQL,withArgumentsInArray: nil)
+        
+        if !result {
+            print( "Failed to add App_Alerts")
+            print("\(insertSQL)")
+            print("Error: \(contactDB.lastErrorMessage())")
+            return false
+        } else {
+            print( "App_Alerts Added")
+            return true
+        }
+    } else {
+        print("Error: \(contactDB.lastErrorMessage())")
+    }
+    return true
+}
+
+      do{
+            //print("\(title_id)")
+
+            let result = try contactDB.executeQuery("SELECT * from app_banners where city_id = \(title_id) ", values: nil)
+            while result.next(){
+                if result.stringForColumn("status") != "0"{
+                self.imagesarray_banners.addObject(result.stringForColumn("app_image"))
+                ////print("amar\(result.stringForColumn("app_image"))")
+                }
+                else{
+                
+                
+                }
+                
+//               cimage2.sd_setImageWithURL(NSURL(string: "http://dnmdigital.com/dnm/ambal/uploads/model/small/\(imagesarray_banners.objectAtIndex(0))"), placeholderImage:  UIImage(named: "compare-car"))
+//                
+          
+                
+            }
+        }catch{
+            
+        }
+
+
+func data() -> String{
+    let year = "SELECT  DISTINCT `app_usedcars`.`year` FROM (`app_usedcars`) LEFT JOIN `app_city` ON `app_usedcars`.`city` = `app_city`.`id` LEFT JOIN `app_brand` ON `app_brand`.`id` = `app_usedcars`.`brand` LEFT JOIN `app_fuel` ON `app_usedcars`.`fuel_type` = `app_fuel`.`id`"
+    return year
+}
+
+
+ for i in 0..<self.id.count {
+//                
+//                saveAlertsTable(self.id.objectAtIndex(i) as! String, subject: self.subject.objectAtIndex(i) as! String, content: self.content.objectAtIndex(i) as! String, status: self.status.objectAtIndex(i) as! String, modified_on: self.modified_on.objectAtIndex(0) as! String)
+//                
+//                
+//                
+//                
+//                
+//           
+}
+
+
+
+
+
